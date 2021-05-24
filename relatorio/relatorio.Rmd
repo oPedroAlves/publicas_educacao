@@ -1,0 +1,278 @@
+---
+title: "Relatório de Educação - Estado do Rio de Janeiro"
+author: "Pedro Alves"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: united
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(ggplot2)
+```
+
+```{r files, include=FALSE}
+#Taxa de Analfabetismo
+analfabetismo = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\analfabetismo_BR.csv", sep = ";", dec = ",",header = TRUE)
+#Taxa de População ausente de escola 
+nfreq_escola = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\freq_escola_BR.csv", sep = ";", dec = ",",header = TRUE)
+#Média de Alunos por sala 2018
+media_aluno_sala = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\media_aluno_turma.csv", sep = ";", dec = ",",header = TRUE)
+#Média de Alunos por sala -- Série Histórica
+temp_media_aluno = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\temp_media_aluno.csv", sep = ";", dec = ",",header = TRUE)
+#Taxas de Rendimento 2018
+taxa_rendimento = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\taxa_rendimento_2018.csv", sep = ";", dec = ",",header = TRUE)
+#Taxas de Rendimento 2018 -- Fundamental
+taxa_rendimento_fundamental = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\taxa_rendimento_fundamental_2018.csv", sep = ";", dec = ",",header = TRUE)
+#Taxas de Rendimento 2018 -- Médio
+taxa_rendimento_medio = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\taxa_rendimento_medio_2018.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Educação Infantil -- Matrícula
+edu_infantil_matr = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_infantil_matr.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Ensino Fundamental -- Matrícula
+edu_fundamental_matr = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_fundamental_matr.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Ensino Médio -- Matrícula
+edu_medio_matr = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_medio_matr.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Educação Infantil -- Estabelecimentos
+edu_infantil_estab = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_infantil_estab.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Ensino Fundamental -- Estabelecimentos
+edu_fundamental_estab = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_fundamental_estab.csv", sep = ";", dec = ",",header = TRUE)
+#Série histórica -- Ensino Médio -- Estabelecimentos
+edu_medio_estab = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\edu_medio_estab.csv", sep = ";", dec = ",",header = TRUE)
+#Educação Infantil - Detalhamento - 2019
+detalhe_infantil = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\detalhes_infantil_2019.csv", sep = ";", dec = ",",header = TRUE)
+#Ensino Fundamental - Detalhamento - 2019
+detalhe_fundamental = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\detalhes_fundamental_2019.csv", sep = ";", dec = ",",header = TRUE)
+#Ensino Médio - Detalhamento - 2019
+detalhe_medio = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\detalhes_medio_2019.csv", sep = ";", dec = ",",header = TRUE)
+#IDHM
+idhm = read.csv("F:\\Arquivos\\R\\publicas_educacao\\arquivos\\idhm_edu.csv", sep = ";", dec = ",",header = TRUE)
+```
+
+Visão Geral
+===================================== 
+
+Column
+-------------------------------------
+    
+### Taxas de analfabetismo e Taxas de rendimento escolar
+
+> Quadro 1: Taxa de analfabetismo das pessoas de 10 a 17 anos de idade (%)
+    
+```{r}
+#Manipulando Tabela
+colnames(analfabetismo) = c("Brasil ou UF","Ocupação","Total","10-13","14-15","16-17")
+analfabetismo = analfabetismo[c(1,18:21),-2]
+analfabetismo$`Brasil ou UF`= c("Brasil","Minas Gerais","Espírito Santo","Rio de Janeiro","São Paulo")
+rownames(analfabetismo) = 1:5
+kable(analfabetismo)
+```
+
+> Quadro 2: Percentual de pessoas que não frequentavam escola na população de 10 a 17 anos de idade (%): 
+
+```{r}
+#Manipulando Tabela
+colnames(nfreq_escola) = c("Brasil ou UF","Ocupação","Total","10-13","14-15","16-17")
+nfreq_escola = nfreq_escola[c(1,18:21),-2]
+nfreq_escola$`Brasil ou UF`= c("Brasil","Minas Gerais","Espírito Santo","Rio de Janeiro","São Paulo")
+rownames(nfreq_escola) = 1:5
+kable(nfreq_escola)
+```
+
+> Quadro 3: Taxas de Rendimento RJ em 2018 (%):
+
+```{r}
+#Manipulando Tabela
+kable(taxa_rendimento)
+```
+> Quadro 4: IDHM 1991-2010
+
+```{r}
+kable(idhm)
+```
+
+
+Column
+-------------------------------------
+   
+### Média de Alunos -- Último ano
+
+> Quadro 5: Média de Alunos RJ por Turma em 2019:
+
+```{r}
+#Manipulando a Tabela
+media_aluno_sala_geral = media_aluno_sala[c(1:3,19:21),c(2:3,5,8,21)]
+colnames(media_aluno_sala_geral) = c("Unidade Geográfica","Localização","Educação Infantil","Ensino Fundamental","Ensino Médio")
+rownames(media_aluno_sala_geral) = 1:6
+kable(media_aluno_sala_geral)
+```
+
+### Média de Alunos -- Série Histórica
+    
+> Quadro 6: Média de Alunos RJ por Turma:
+
+```{r}
+temp_media_aluno = temp_media_aluno[,1:4]
+colnames(temp_media_aluno) = c("Ano","Educação Infantil","Ensino Fundamental","Ensino Médio")
+kable(temp_media_aluno)
+```
+
+Educação Infantil
+=====================================
+
+Column
+-------------------------------------
+
+### Matrículas em Educação Infantil
+
+```{r}
+edu_infantil_matr = edu_infantil_matr[2,c(-1,-2)]
+edu_infantil_matr = data.frame(2000:2018,t(edu_infantil_matr))
+colnames(edu_infantil_matr) = c("Ano","Matriculas")
+rownames(edu_infantil_matr) = 1:19
+
+matricula_graph = ggplot(edu_infantil_matr, aes(x = Ano, y = Matriculas))+
+  geom_point(color = "#00AFBB", size = 2)+
+  ggtitle("Número de Matrículas na Educação Infantil - RJ")+
+  ylab("Nº de Matrículas")+
+  xlab("Ano")
+matricula_graph
+```
+
+
+Column {.tabset}
+-------------------------------------
+
+### Quantidade de alunos médios
+
+```{r}
+temp_media_aluno_infantil = temp_media_aluno[,1:2]
+kable(temp_media_aluno_infantil)
+```
+
+### Estabelecimentos
+
+```{r}
+edu_infantil_estab = edu_infantil_estab[2,c(-1,-2)]
+colnames(edu_infantil_estab) = 2000:2018
+rownames(edu_infantil_estab) = c("Qtd: ")
+kable(edu_infantil_estab)
+```
+
+### Detalhamento Educação Infantil
+
+```{r}
+kable(detalhe_infantil)
+```
+
+Ensino Fundamental
+=====================================
+
+Column 
+-------------------------------------
+
+### Matrículas no Ensino Fundamental
+
+```{r}
+edu_fundamental_matr = edu_fundamental_matr[2,c(-1,-2)]
+edu_fundamental_matr = data.frame(2000:2018,t(edu_fundamental_matr))
+colnames(edu_fundamental_matr) = c("Ano","Matriculas")
+rownames(edu_fundamental_matr) = 1:19
+
+ggplot(edu_fundamental_matr, aes(x = Ano, y = Matriculas))+
+  geom_point(color = "#00AFBB", size = 2)+
+  ggtitle("Número de Matrículas no Ensino Fundamental - RJ")+
+  ylab("Nº de Matrículas")+
+  xlab("Ano")
+```
+
+
+Column {.tabset}
+-------------------------------------
+
+### Quantidade de alunos médios
+
+```{r}
+temp_media_aluno_fundamental = temp_media_aluno[,c(1,3)]
+kable(temp_media_aluno_fundamental)
+```
+
+### Estabelecimentos
+
+```{r}
+
+edu_fundamental_estab = edu_fundamental_estab[2,c(-1,-2)]
+colnames(edu_fundamental_estab) = 2000:2018
+rownames(edu_fundamental_estab) = c("Qtd: ")
+kable(edu_fundamental_estab)
+```
+
+### Taxa de Rendimento
+
+```{r}
+colnames(taxa_rendimento_fundamental) = c("Estágio","Reprovação","Abandono","Aprovação")
+kable(taxa_rendimento_fundamental)
+```
+
+### Detalhamento Ensino Fundamental
+
+```{r}
+colnames(detalhe_fundamental) = c("Localização","Tipo","1º ano","2º ano","3º ano","4º ano","5º ano","6º ano","7º ano","8º ano","8º ano","Ensino Fundamental I","Ensino Fundamental II","Total")
+kable(detalhe_fundamental)
+```
+
+Ensino Médio
+=====================================
+
+Column
+-------------------------------------
+
+### Matrículas no Ensino Médio
+
+```{r}
+edu_medio_matr = edu_medio_matr[2,c(-1,-2)]
+edu_medio_matr = data.frame(2000:2018,t(edu_medio_matr))
+colnames(edu_medio_matr) = c("Ano","Matriculas")
+rownames(edu_medio_matr) = 1:19
+
+ggplot(edu_medio_matr, aes(x = Ano, y = Matriculas))+
+  geom_point(color = "#00AFBB", size = 2)+
+  ggtitle("Número de Matrículas no Ensino Médio - RJ")+
+  ylab("Nº de Matrículas")+
+  xlab("Ano")
+```
+
+
+Column {.tabset}
+-------------------------------------
+
+### Quantidade de alunos Ensino Médio
+
+```{r}
+temp_media_aluno_medio = temp_media_aluno[,c(1,4)]
+kable(temp_media_aluno_medio)
+```
+
+### Estabelecimentos
+
+```{r}
+
+edu_medio_estab = edu_medio_estab[2,c(-1,-2)]
+colnames(edu_medio_estab) = 2000:2018
+rownames(edu_medio_estab) = c("Qtd: ")
+kable(edu_medio_estab)
+```
+
+### Taxa de Rendimento
+
+```{r}
+colnames(taxa_rendimento_medio) = c("Estágio","Reprovação","Abandono","Aprovação")
+kable(taxa_rendimento_medio)
+```
+
+### Detalhamento Ensino Médio
+
+```{r}
+colnames(detalhe_medio) = c("Localização","Tipo","1ª Série","2ª Série","3ª Série","4ª Série","Não-seriado","Total")
+kable(detalhe_medio)
+```
